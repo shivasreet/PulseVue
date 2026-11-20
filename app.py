@@ -8,6 +8,7 @@ import uuid
 import torch
 import torch.nn as nn
 import json
+import gc
 
 from PIL import Image
 from torchvision import transforms, models
@@ -30,9 +31,12 @@ RESULT_FOLDER.mkdir(parents=True, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
+# Reduce CPU thread usage
+torch.set_num_threads(1)
+
 
 # -------------------------------------------------
-# 2. Load existing YOLO model
+# 2. Load YOLO model
 # -------------------------------------------------
 
 MODEL_PATH = (
@@ -141,11 +145,15 @@ image_transform = transforms.Compose([
 
 def validate_chickpea_image(image_path):
 
-    image = Image.open(image_path).convert("RGB")
+    with Image.open(image_path) as image:
 
-    image_tensor = image_transform(image).unsqueeze(0)
+        image = image.convert("RGB")
 
-    with torch.no_grad():
+        image.thumbnail((1280, 1280))
+
+        image_tensor = image_transform(image).unsqueeze(0)
+
+    with torch.inference_mode():
 
         outputs = classifier(image_tensor)
 
@@ -237,9 +245,13 @@ def analyse():
             str(upload_path)
         )
 
-    except Exception:
+    except Exception as error:
+
+        print(f"Classifier error: {error}")
 
         upload_path.unlink(missing_ok=True)
+
+        gc.collect()
 
         return (
             "Unable to process this image. Please upload a valid image.",
@@ -263,86 +275,112 @@ def analyse():
     # STEP 3: Analyse valid image using YOLOv8
     # ---------------------------------------------
 
-    predictions = yolo_model.predict(
-        source=str(upload_path),
-        conf=0.25,
-        agnostic_nms=True,
-        save=False,
-        verbose=False
-    )
+    try:
 
-    result = predictions[0]
+        predictions = yolo_model.predict(
+            source=str(upload_path),
+            conf=0.25,
+            imgsz=416,
+            max_det=100,
+            agnostic_nms=True,
+            device="cpu",
+            stream=True,
+            save=False,
+            verbose=False
+        )
+
+        result = next(iter(predictions))
+
+        # Release generator reference
+        del predictions
 
 
-    # ---------------------------------------------
-    # STEP 4: Get detected class IDs
-    # ---------------------------------------------
+        # -----------------------------------------
+        # STEP 4: Get detected class IDs
+        # -----------------------------------------
 
-    detected_class_ids = []
+        detected_class_ids = []
 
-    if result.boxes is not None:
+        if result.boxes is not None:
 
-        detected_class_ids = (
-            result.boxes.cls.int().cpu().tolist()
+            detected_class_ids = (
+                result.boxes.cls.int().cpu().tolist()
+            )
+
+
+        # -----------------------------------------
+        # STEP 5: Count chickpeas
+        # -----------------------------------------
+
+        chickpea_count = sum(
+            1 for class_id in detected_class_ids
+            if class_id in CHICKPEA_CLASSES
         )
 
 
-    # ---------------------------------------------
-    # STEP 5: Count chickpeas
-    # ---------------------------------------------
+        # -----------------------------------------
+        # STEP 6: Check foreign material presence
+        # -----------------------------------------
 
-    chickpea_count = sum(
-        1 for class_id in detected_class_ids
-        if class_id in CHICKPEA_CLASSES
-    )
-
-
-    # ---------------------------------------------
-    # STEP 6: Check foreign material presence
-    # ---------------------------------------------
-
-    foreign_object_detected = any(
-        class_id in FOREIGN_OBJECT_CLASSES
-        for class_id in detected_class_ids
-    )
+        foreign_object_detected = any(
+            class_id in FOREIGN_OBJECT_CLASSES
+            for class_id in detected_class_ids
+        )
 
 
-    # ---------------------------------------------
-    # STEP 7: Generate annotated detection image
-    # ---------------------------------------------
+        # -----------------------------------------
+        # STEP 7: Generate annotated image
+        # -----------------------------------------
 
-    annotated_image = result.plot()
+        annotated_image = result.plot()
 
-    image_saved = cv2.imwrite(
-        str(result_path),
-        annotated_image
-    )
+        image_saved = cv2.imwrite(
+            str(result_path),
+            annotated_image
+        )
 
-    if not image_saved:
-        return "Unable to save the analysis result image.", 500
+        if not image_saved:
+
+            return "Unable to save the analysis result image.", 500
+
+        del result
+        del annotated_image
+
+        gc.collect()
 
 
-    # ---------------------------------------------
-    # STEP 8: Display analysis results
-    # ---------------------------------------------
+        # -----------------------------------------
+        # STEP 8: Display analysis results
+        # -----------------------------------------
 
-    return render_template(
-        "result.html",
+        return render_template(
+            "result.html",
 
-        original_image=url_for(
-            "static",
-            filename=f"uploads/{uploaded_filename}"
-        ),
+            original_image=url_for(
+                "static",
+                filename=f"uploads/{uploaded_filename}"
+            ),
 
-        result_image=url_for(
-            "static",
-            filename=f"results/{result_filename}"
-        ),
+            result_image=url_for(
+                "static",
+                filename=f"results/{result_filename}"
+            ),
 
-        total_count=chickpea_count,
+            total_count=chickpea_count,
 
-        foreign_object_detected=foreign_object_detected
-    )
+            foreign_object_detected=foreign_object_detected
+        )
+
+    except Exception as error:
+
+        print(f"YOLO analysis error: {error}")
+
+        gc.collect()
+
+        return (
+            "Unable to complete image analysis. Please try again.",
+            500
+        )
 
 
 # -------------------------------------------------
@@ -361,4 +399,4 @@ def file_too_large(error):
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
+    app.run(debug=False)
