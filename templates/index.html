@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PulseVue | Smart Chickpea Analysis</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f9ef;
+            color: #173e30;
+        }
+
+        /* HEADER */
+
+        header {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            background: rgba(255,255,255,0.95);
+            border-bottom: 1px solid #e8efdf;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #176b43;
+        }
+
+        .tagline {
+            color: #64736b;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        /* HERO SECTION */
+
+        .hero {
+            min-height: 430px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 35px;
+            padding: 35px 6%;
+            background: linear-gradient(120deg, #f8faef, #edf5df);
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: clamp(35px, 4vw, 56px);
+            line-height: 1.12;
+            margin-bottom: 22px;
+            color: #173e30;
+        }
+
+        .hero h1 span {
+            color: #168347;
+        }
+
+        .hero p {
+            color: #586a61;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .start-btn {
+            display: inline-block;
+            background: linear-gradient(120deg, #087a3d, #35a64e);
+            color: white;
+            text-decoration: none;
+            padding: 16px 35px;
+            border-radius: 35px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(30,130,65,0.2);
+            transition: 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(30,130,65,0.3);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 340px;
+            object-fit: cover;
+            border-radius: 35px;
+            box-shadow: 0 12px 30px rgba(37,85,48,0.12);
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            padding: 25px 5%;
+        }
+
+        .feature {
+            background: white;
+            padding: 22px 18px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 5px 20px rgba(31,75,43,0.07);
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            min-width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #e5f4e4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 29px;
+        }
+
+        .feature h3 {
+            color: #176b43;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .feature p {
+            color: #66746d;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 17px;
+            color: #47745a;
+            font-size: 13px;
+            border-top: 1px solid #dce9d5;
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        @media (min-width: 1100px) {
+            body {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .hero {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px 7%;
+            }
+
+            .hero-image {
+                height: 280px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            header {
+                height: 70px;
+            }
+
+            .logo {
+                font-size: 25px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .hero-image {
+                height: 220px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header>
+        <div>
+            <div class="logo">🌿 PulseVue</div>
+            <div class="tagline">See. Detect. Analyse.</div>
+        </div>
+    </header>
+
+
+    <!-- HERO SECTION -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Smart <span>Chickpea</span><br>
+                Grain Analysis
+            </h1>
+
+            <p>
+                Experience AI-powered chickpea detection and counting
+                using deep learning. Upload an image and let PulseVue
+                analyse the grains with intelligent object detection.
+            </p>
+
+            <a href="{{ url_for('upload_page') }}" class="start-btn">
+                Get Started →
+            </a>
+
+        </div>
+
+        <div>
+            <img
+                src="{{ url_for('static', filename='images/pulsevue_chickpea_hero.png') }}"
+                alt="AI-powered chickpea grain detection"
+                class="hero-image"
+            >
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <div class="feature">
+
+            <div class="feature-icon">🧠</div>
+
+            <div>
+                <h3>AI Detection</h3>
+                <p>
+                    Detect individual chickpea grains using
+                    YOLOv8 deep learning.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">📊</div>
+
+            <div>
+                <h3>Grain Counting</h3>
+                <p>
+                    Automatically count the detected
+                    chickpea objects.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">👁️</div>
+
+            <div>
+                <h3>Visual Analysis</h3>
+                <p>
+                    View detected grains with bounding
+                    boxes and confidence scores.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+        🌿 PulseVue | AI-Powered Chickpea Grain Analysis
+    </footer>
+
+</body>
+</html>

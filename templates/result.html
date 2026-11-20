@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analysis Results | PulseVue</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f8f3;
+            color: #24352b;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        header {
+            min-height: 75px;
+            background: white;
+            padding: 12px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 750;
+            color: #278653;
+        }
+
+        .tagline {
+            font-size: 11px;
+            color: #849087;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-label {
+            background: #edf7ef;
+            color: #278653;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .container {
+            max-width: 1350px;
+            min-height: calc(100vh - 125px);
+            margin: auto;
+            padding: 30px 35px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .heading .eyebrow {
+            color: #278653;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .heading h1 {
+            font-size: 30px;
+            color: #20392b;
+            margin-bottom: 7px;
+        }
+
+        .heading p {
+            font-size: 14px;
+            color: #77847b;
+        }
+
+        /* FOREIGN MATERIAL MESSAGE */
+
+        .warning-box {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 650;
+            line-height: 1.6;
+        }
+
+        .warning-box.warning {
+            background: #fff1ed;
+            border: 1px solid #f4c7b9;
+            color: #b8442e;
+        }
+
+        .warning-box.success {
+            background: #edf7ef;
+            border: 1px solid #cce6d0;
+            color: #278653;
+        }
+
+        .results-layout {
+            display: grid;
+            grid-template-columns: 0.75fr 1.35fr 1.35fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        /* COUNT CARD */
+
+        .count-card {
+            background: white;
+            border: 1px solid #e4eee4;
+            border-radius: 17px;
+            padding: 25px 17px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.035);
+        }
+
+        .count-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            background: #eaf5eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .count-card h2 {
+            font-size: 58px;
+            color: #278653;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .count-card h3 {
+            font-size: 15px;
+            color: #344b3a;
+            margin-bottom: 10px;
+        }
+
+        .count-card p {
+            color: #87938a;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .count-divider {
+            width: 55px;
+            height: 3px;
+            background: #d6ead9;
+            border-radius: 5px;
+            margin: 17px 0;
+        }
+
+        .count-status {
+            color: #278653;
+            font-size: 11px;
+            font-weight: 700;
+            background: #edf7ef;
+            padding: 8px 13px;
+            border-radius: 20px;
+        }
+
+        /* IMAGE CARDS */
+
+        .image-card {
+            background: white;
+            border: 1px solid #e4eee4;
+            border-radius: 17px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.035);
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .image-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 25px rgba(0,0,0,0.07);
+        }
+
+        .image-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .image-card h3 {
+            font-size: 16px;
+            color: #2b4132;
+        }
+
+        .image-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: #278653;
+            background: #edf7ef;
+            padding: 7px 11px;
+            border-radius: 20px;
+        }
+
+        .image-wrapper {
+            height: 430px;
+            background: #f5f8f5;
+            border-radius: 11px;
+            border: 1px solid #edf1ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 7px;
+        }
+
+        .image-description {
+            color: #87938a;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 13px;
+        }
+
+        /* ACTION BUTTONS */
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 13px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 650;
+            transition: 0.2s ease;
+        }
+
+        .primary-btn {
+            background: #278653;
+            color: white;
+            box-shadow: 0 4px 12px rgba(39,134,83,0.15);
+        }
+
+        .primary-btn:hover {
+            background: #1e7044;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background: white;
+            color: #278653;
+            border: 1px solid #cbdccc;
+        }
+
+        .secondary-btn:hover {
+            background: #edf7ef;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            color: #89958c;
+            font-size: 11px;
+            border-top: 1px solid #e8eee8;
+            text-align: center;
+        }
+
+        /* TABLET */
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 25px 20px;
+            }
+
+            .results-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .count-card {
+                grid-column: 1 / -1;
+                min-height: 210px;
+            }
+
+            .image-wrapper {
+                height: 350px;
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 550px) {
+            header {
+                padding: 12px 5%;
+            }
+
+            .logo {
+                font-size: 23px;
+            }
+
+            .header-label {
+                font-size: 10px;
+                padding: 7px 10px;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+
+            .heading h1 {
+                font-size: 24px;
+            }
+
+            .heading p {
+                font-size: 12px;
+                line-height: 1.6;
+            }
+
+            .results-layout {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .count-card {
+                grid-column: auto;
+                min-height: 210px;
+            }
+
+            .count-card h2 {
+                font-size: 48px;
+            }
+
+            .image-wrapper {
+                height: 300px;
+            }
+
+            .image-card h3 {
+                font-size: 14px;
+            }
+
+            .actions {
+                flex-direction: column;
+                margin-top: 22px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <div>
+            <div class="logo">PulseVue</div>
+            <div class="tagline">See. Detect. Analyse.</div>
+        </div>
+
+        <div class="header-label">
+            AI Grain Analysis
+        </div>
+
+    </header>
+
+    <main class="container">
+
+        <section class="heading">
+
+            <div class="eyebrow">
+                Analysis Complete
+            </div>
+
+            <h1>Your Analysis Results</h1>
+
+            <p>
+                Your chickpea image has been analysed successfully using YOLOv8.
+            </p>
+
+        </section>
+
+        <!-- FOREIGN MATERIAL MESSAGE -->
+
+        {% if foreign_object_detected %}
+
+        <div class="warning-box warning">
+            ⚠️ Warning: Foreign material is present in the uploaded sample.
+        </div>
+
+        {% else %}
+
+        <div class="warning-box success">
+            ✓ No foreign materials detected in the uploaded sample.
+        </div>
+
+        {% endif %}
+
+        <section class="results-layout">
+
+            <!-- CHICKPEA COUNT -->
+
+            <div class="count-card">
+
+                <div class="count-icon">
+                    🌱
+                </div>
+
+                <h2>{{ total_count }}</h2>
+
+                <h3>Total Chickpeas Detected</h3>
+
+                <div class="count-divider"></div>
+
+                <p>
+                    Total number of chickpea grains
+                    identified in the uploaded image.
+                </p>
+
+                <div style="margin-top: 18px;">
+                    <span class="count-status">
+                        ✓ Analysis Complete
+                    </span>
+                </div>
+
+                <div class="count-divider"></div>
+
+                {% if foreign_object_detected %}
+
+                    <div style="font-size: 35px; margin-bottom: 10px;">
+                        ⚠️
+                    </div>
+
+                    <h3 style="color: #c65a42;">
+                        Foreign Material Present
+                    </h3>
+
+                    <p>
+                        Foreign materials have been detected
+                        in the uploaded sample.
+                    </p>
+
+                {% else %}
+
+                    <h3 style="color: #278653;">
+                        No Foreign Materials Detected
+                    </h3>
+
+                    <p>
+                        No foreign materials were detected
+                        in the uploaded sample.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ORIGINAL IMAGE -->
+
+            <div class="image-card">
+
+                <div class="image-card-header">
+
+                    <h3>Original Image</h3>
+
+                    <span class="image-tag">
+                        INPUT
+                    </span>
+
+                </div>
+
+                <div class="image-wrapper">
+
+                    <img src="{{ original_image }}"
+                         alt="Original chickpea image">
+
+                </div>
+
+                <p class="image-description">
+                    Uploaded chickpea grain image
+                </p>
+
+            </div>
+
+            <!-- AI DETECTION RESULT -->
+
+            <div class="image-card">
+
+                <div class="image-card-header">
+
+                    <h3>AI Detection Result</h3>
+
+                    <span class="image-tag">
+                        ANALYSED
+                    </span>
+
+                </div>
+
+                <div class="image-wrapper">
+
+                    <img src="{{ result_image }}"
+                         alt="YOLOv8 detection result">
+
+                </div>
+
+                <p class="image-description">
+                    Chickpeas and detected foreign materials identified with bounding boxes
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="actions">
+
+            <a href="{{ url_for('upload_page') }}"
+               class="btn primary-btn">
+                + Analyse Another Image
+            </a>
+
+            <a href="{{ url_for('home') }}"
+               class="btn secondary-btn">
+                Back to Home
+            </a>
+
+        </section>
+
+    </main>
+
+    <footer>
+        PulseVue | AI-Powered Chickpea Grain Analysis
+    </footer>
+
+</body>
+
+</html>

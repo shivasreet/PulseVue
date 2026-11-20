@@ -1,0 +1,53 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Dataset folders
+chickpea seeds.v7i.yolov8/
+classifier_dataset/
+classifier_split/
+non_chickpea_extracted/
+pulsevue_detection_dataset/
+mixed_grains_dataset/
+
+# Training and testing scripts
+clean_dataset.py
+train.py
+train_classifier.py
+evaluate_*.py
+test_model.py
+test_augmented_model.py
+
+# Ignore all training outputs except the required YOLO model
+runs/
+!runs/
+runs/*/
+!runs/pulsevue_augmented/
+runs/pulsevue_augmented/*
+!runs/pulsevue_augmented/weights/
+runs/pulsevue_augmented/weights/*
+!runs/pulsevue_augmented/weights/best.pt
+
+# Unnecessary pretrained model
+yolov8n.pt
+
+# Temporary uploaded images
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Generated analysis images
+static/results/*
+!static/results/.gitkeep
+
+# Environment variables
+.env
+.env.*
+
+# Windows/macOS temporary files
+Thumbs.db
+.DS_Store
