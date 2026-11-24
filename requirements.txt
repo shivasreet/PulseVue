@@ -2,5 +2,6 @@ streamlit
 ultralytics==8.4.211
 torch
 torchvision
-opencv-python-headless
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
 Pillow
